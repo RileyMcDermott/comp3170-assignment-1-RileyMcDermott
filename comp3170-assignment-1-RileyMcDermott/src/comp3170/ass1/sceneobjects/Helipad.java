@@ -47,6 +47,7 @@ public class Helipad extends SceneObject{
 	
 	
 	public Helipad(Shader shader) {
+		//creating a circle for the helipad.
 		int j = 0;
 		for (int i = 0; i < NSIDES; i++) {
 			
