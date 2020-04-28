@@ -2,6 +2,7 @@ package comp3170.ass1;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -25,7 +26,11 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
+import comp3170.ass1.sceneobjects.Helicopter;
+import comp3170.ass1.sceneobjects.Helipad;
 import comp3170.ass1.sceneobjects.House;
+import comp3170.ass1.sceneobjects.Rotor;
+import comp3170.ass1.sceneobjects.Tree;
 import comp3170.ass1.sceneobjects.SceneObject;
 
 public class Assignment1 extends JFrame implements GLEventListener {
@@ -42,6 +47,11 @@ public class Assignment1 extends JFrame implements GLEventListener {
 	private SceneObject root;	
 
 	private Matrix4f worldMatrix;
+	private Animator animator;
+	
+	Helicopter helicopter;
+	Rotor rotor1;
+	Rotor rotor2;
 	
 	public Assignment1() {
 		super("COMP3170 Assignment 1");
@@ -69,6 +79,10 @@ public class Assignment1 extends JFrame implements GLEventListener {
 				System.exit(0);
 			}
 		});	
+		
+		//adding an animator
+		animator = new Animator(canvas);
+		animator.start();
 		
 	}
 
@@ -101,10 +115,34 @@ public class Assignment1 extends JFrame implements GLEventListener {
 		
 		House house1 = new House(this.shader);
 		house1.localMatrix.translate(0.3f, -0.2f, 0);
-		house1.localMatrix.rotateZ((float) Math.PI / 6);
-		house1.localMatrix.scale(0.1f, 0.1f, 1);
+		//house1.localMatrix.rotateZ((float) Math.PI / 6);
+		house1.localMatrix.scale(0.05f, 0.05f, 1);
 		house1.setParent(this.root);
-
+		
+		Tree tree1 = new Tree(this.shader);
+		tree1.localMatrix.scale(0.1f, 0.1f, 1);
+		tree1.setParent(this.root);
+		
+		Helipad helipad = new Helipad(this.shader);
+		helipad.localMatrix.translate(-0.2f, 0.3f, 0);
+		helipad.localMatrix.scale(0.1f, 0.1f, 1);
+		helipad.setParent(this.root);
+		
+		helicopter = new Helicopter(this.shader);
+		helicopter.localMatrix.translate(0, 0.5f, 0);
+		helicopter.localMatrix.scale(0.5f, 0.5f, 1);
+		helicopter.setParent(this.root);
+		
+		rotor1 = new Rotor(this.shader);
+		rotor1.localMatrix.translate(0, 0.1f, 0);
+		rotor1.localMatrix.rotateZ((float)Math.PI/4);
+		rotor1.localMatrix.scale(0.7f, 0.7f, 1);
+		rotor1.setParent(helicopter);
+		
+		rotor2 = new Rotor(this.shader);
+		rotor2.localMatrix.translate(0, -0.1f, 0);
+		rotor2.localMatrix.scale(0.7f, 0.7f, 1);
+		rotor2.setParent(helicopter);
 	}
 
 	@Override
@@ -116,7 +154,21 @@ public class Assignment1 extends JFrame implements GLEventListener {
 		
 		// set the background colour to dark green
 		gl.glClearColor(0.1f, 0.6f, 0.1f, 1.0f);
-		gl.glClear(GL_COLOR_BUFFER_BIT);		
+		gl.glClear(GL_COLOR_BUFFER_BIT);
+		
+		if(input.isKeyDown(KeyEvent.VK_UP)) {
+			helicopter.localMatrix.translate(0f, 0.01f, 0);
+		}
+		if(input.isKeyDown(KeyEvent.VK_LEFT)){
+		helicopter.localMatrix.rotateZ((float)Math.PI/144);
+		}
+		
+		if(input.isKeyDown(KeyEvent.VK_RIGHT)){
+			helicopter.localMatrix.rotateZ((float)-Math.PI/144);
+		}
+		
+		rotor1.localMatrix.rotateZ((float)Math.PI/40);
+		rotor2.localMatrix.rotateZ((float)-Math.PI/40);
 		
 		this.shader.enable();
 		
